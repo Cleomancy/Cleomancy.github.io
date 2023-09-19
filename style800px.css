@@ -1,0 +1,49 @@
+@namespace url("http://www.w3.org/1999/xhtml");
+@charset "UTF-8";
+/* CSS Document */
+
+*{
+  font-smooth: never;
+	-webkit-font-smoothing: none;
+	-moz-osx-font-smoothing: none;
+	-ms-overflow-style: none;  /* IE and Edge */
+  	scrollbar-width: none;  /* Firefox */
+	}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+*::-webkit-scrollbar
+{
+	display: none;
+}
+
+body{
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;                   /* firefox         */
+    image-rendering: -o-crisp-edges;                     /* opera           */
+    image-rendering: -webkit-optimize-contrast;          /* chrome & safari */
+    image-rendering: pixelated;                          /* chrome          */
+    image-rendering: optimize-contrast;                  /* CSS3 proposed   */
+    -ms-interpolation-mode: nearest-neighbor;            /* IE8+            */
+    
+}
+
+body{
+  background-color: #24191e;
+  background-attachment: fixed;
+  color:#fff;
+	font-family:"Mono", "Consolas", "MS PGothic", sans-serif;
+	
+}
+
+.top,.bottom{
+  width:100vw;
+  position:relative;
+  margin:auto;
+  text-align:center;
+  border-bottom: dashed #5295a3;
+  padding-top:2vh;
+}
+
+table{
+  width:100vw;
+}
