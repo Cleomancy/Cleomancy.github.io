@@ -28,57 +28,60 @@ body{
 }
 
 body{
-  background-color: #24191e;
-  background-attachment: fixed;
-  color:#fff;
-	font-family:"Mono", "Consolas", "MS PGothic", sans-serif;
-	
-}
+    background-color: #2e2027;
+    margin: auto;
+    text-align: center;
+    color: #bcaabc;
+    font-family:"Mono", "Consolas", "MS PGothic", sans-serif;
+    }    
 
-.top,.bottom{
-  width:70vw;
-  position:relative;
-  margin:auto;
-  text-align:center;
-  border-bottom: dashed #5295a3;
-  padding-top:2vh;
-}
-
-.bottom{
-  border: none;
-  margin-top:1vw;
+    
+p {
+    margin: 13px 20px 13px 20px;
+    font-size:21px;
+    color: #bcaabc;
 }
 
 h1 {
     color: white;
-    font-size:75px;
-    margin-top: 1vh;
-    margin-bottom: 1vh;
-    text-shadow: 2px 2px 7px #bcaabc;
+    font-size:60px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    text-shadow: 0px 0px 10px #bcaabc;
+    animation: blinker 1s linear infinite;
 }
 
-p,ul{
-      font-size:22px;
-      text-align:justify;
-      padding-left:3vw;
-      padding-right:3vw;
+h2 {
+    margin-bottom: 5px;
+    font-size:36px;
+    margin-top: 7px;
+    color:white;
 }
 
-ul{
-  list-style:none;
+.border /*title for main content and side panels*/ {
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    background-color:#3c3447;
+    margin: 0px;
+    border: 2px solid #3c3447;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis "";
 }
 
-table{
-  width:70vw;
-}
-td{
-  border-bottom:dashed #5295a3;
+.box {
+    width: 80%;
+    border :#3c3447 solid 4px;
+    padding: 0px;
+    margin: auto;
+    margin-top:10px;
 }
 
 a {
+    font-size:29px;
     color: #bcfdcf;
     text-decoration:none;
-    margin: 3px;
     }
     
 a:visited {
@@ -92,9 +95,21 @@ a:hover {
 
 a{transition: all 0.4s ease;}
 
+.blink{
+  height:30px;
+  width:auto;
+}
 
+.fav{
+  margin-top:43px;
+  margin-bottom:30px;
+  height:100px;
+  width:auto;
+}
 
-
-
+@keyframes blinker {
+  50% {
+    text-shadow: 0 0 0;
+  }
 
 
