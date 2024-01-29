@@ -2,7 +2,7 @@
 
 body {
 	font-family: "Garamond", Georgia, serif, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji';
-	background: #150320;
+	background: #2e2027;
 	color: #ddd;
 }
 
@@ -11,7 +11,7 @@ main {
 	max-width: 800px ;
 	margin: auto ;
 	/*background-color: #2e1240;*/
-	outline: #2e1240 solid 3px;
+	outline: #3c3447 solid 3px;
 	outline-offset: 15px;
 }
 
