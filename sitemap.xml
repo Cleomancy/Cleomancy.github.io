@@ -2,9 +2,6 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://cleomancy.github.io/index.xhtml</loc>
-    <lastmod>2024-01-29T08:44:04+01:00</lastmod>
-  </url><url>
     <loc>https://cleomancy.github.io/tags/hugo/index.xhtml</loc>
     <lastmod>2024-01-29T08:44:04+01:00</lastmod>
   </url><url>
@@ -17,13 +14,8 @@
     <loc>https://cleomancy.github.io/tags/technical/index.xhtml</loc>
     <lastmod>2024-01-29T08:44:04+01:00</lastmod>
   </url><url>
-    <loc>https://cleomancy.github.io/about/index.xhtml</loc>
+    <loc>https://cleomancy.github.io/index.xhtml</loc>
     <lastmod>2024-01-28T08:43:58+01:00</lastmod>
-  </url><url>
-    <loc>https://cleomancy.github.io/tags/site-updates/index.xhtml</loc>
-    <lastmod>2024-01-28T08:43:58+01:00</lastmod>
-  </url><url>
-    <loc>https://cleomancy.github.io/categories/index.xhtml</loc>
   </url><url>
     <loc>https://cleomancy.github.io/lol/index.xhtml</loc>
   </url><url>

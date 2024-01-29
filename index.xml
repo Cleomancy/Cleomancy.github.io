@@ -2,11 +2,11 @@
   <channel>
 	<title>CLEOMANCY dot BLOG</title>
 	<link>https://cleomancy.github.io/index.xhtml</link>
-	<description>Recent content on CLEOMANCY dot BLOG</description>
+	<description>Recent content in About on CLEOMANCY dot BLOG</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>en-us</language>
 	<copyright>Cleomancy</copyright>
-	<lastBuildDate>Mon, 29 Jan 2024 08:44:04 +0100</lastBuildDate>
+	<lastBuildDate>Sun, 28 Jan 2024 08:43:58 +0100</lastBuildDate>
     
         <atom:link href="https://cleomancy.github.io/index.xml" rel="self" type="application/rss+xml" />
 	
@@ -100,18 +100,6 @@ Or you can check my &lt;a href=&#34;https://github.com/Cleomancy/cleogo&#34;&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
-</description>
-	</item>
-	
-	<item>
-		<title>About</title>
-		<link>https://cleomancy.github.io/about/index.xhtml</link>
-		<pubDate>Sun, 28 Jan 2024 08:43:58 +0100</pubDate>
-		
-		<guid>https://cleomancy.github.io/about/index.xhtml</guid>
-		<description>&lt;h2 id=&#34;welcome&#34;&gt;WELCOME!&lt;/h2&gt;
-&lt;p&gt;This is my junk Github page where I upload anything, wether I want to test things or just come up with temporary measures before pushing them to my &lt;a href=&#34;https://cleomancy.com&#34;&gt;actual website&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;This site in particular serves as a testing ground for my &lt;a href=&#34;https://github.com/Cleomancy/cleogo&#34;&gt;Hugo theme&lt;/a&gt;. I&amp;#39;m testing XHTML redirections.&lt;/p&gt;
 </description>
 	</item>
 	
