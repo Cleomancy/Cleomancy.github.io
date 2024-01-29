@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
   <channel>
-	<title>CLEOMANCY dot BLOG</title>
+	<title>GIT dot CLEOMANCY</title>
 	<link>https://cleomancy.github.io/index.xhtml</link>
-	<description>Recent content in About on CLEOMANCY dot BLOG</description>
+	<description>Recent content in About on GIT dot CLEOMANCY</description>
 	<generator>Hugo -- gohugo.io</generator>
 	<language>en-us</language>
 	<copyright>Cleomancy</copyright>
