@@ -1,0 +1,95 @@
+@charset "utf-8";
+
+body {
+	font-family: "Garamond", Georgia, serif, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji';
+	background: #150320;
+	color: #ddd;
+}
+
+main {
+	text-align: justify;
+	max-width: 800px ;
+	margin: auto ;
+	/*background-color: #2e1240;*/
+	outline: #2e1240 solid 3px;
+	outline-offset: 15px;
+}
+
+img {
+	max-width: 100% ;
+}
+
+header{
+	text-align: center;
+	padding-bottom: 30px;
+}
+
+header h1 {
+	text-decoration: underline dotted;
+}
+
+nav a{
+	margin-right: 11px;
+	margin-left: 11px;
+}
+
+#TableOfContents {
+	margin-top: 0;
+	padding-left: 27px;
+}
+
+h4{
+	margin: 0;
+}
+
+#TableOfContents ul{
+	list-style:"\21AA  ";
+}
+
+#list ul{
+  list-style:"\21AA  ";
+}
+#list li{
+  font-size: 1.30em;
+}
+
+footer {
+	padding-top: 20px;
+	text-align: center ;
+	clear: both ;
+}
+
+footer a,img {
+	margin: 5px;
+}
+
+a{
+  color: #fc8c4c;
+  text-decoration: none;
+}
+
+a:hover{
+	color: #fc4c4c;
+	text-decoration: underline;
+}
+
+/* For TAGLIST.HTML */
+.taglist {
+	text-align: center ;
+	clear: both ;
+}
+
+/* For NEXTPREV.HTML */
+#nextprev {
+}
+#prevart {
+	float: left ;
+	text-align: left ;
+}
+#nextart {
+	float: right ;
+	text-align: right ;
+}
+#nextart,#prevart {
+	max-width: 33% ;
+}
