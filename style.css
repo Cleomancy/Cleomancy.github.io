@@ -63,6 +63,10 @@ footer a,img {
 	margin: 5px;
 }
 
+footer hr{
+	border: 1px solid #fc8c4c;
+}
+
 a{
   color: #fc8c4c;
   text-decoration: none;
