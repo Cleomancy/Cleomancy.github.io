@@ -23,4 +23,7 @@
   </url><url>
     <loc>https://cleomancy.github.io/sitemap.xhtml</loc>
   </url>
+  <url>
+    <loc>https://cleomancy.github.io/robots.txt</loc>
+  </url>
 </urlset>
