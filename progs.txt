@@ -14,6 +14,7 @@ cronie
 dosfstools
 libnotify
 dunst
+bmon
 calcurse
 exfat-utils
 nsxiv
@@ -44,6 +45,7 @@ xdotool
 yt-dlp
 zathura
 zathura-pdf-mupdf
+neofetch
 poppler
 mediainfo
 atool
