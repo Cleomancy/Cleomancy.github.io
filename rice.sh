@@ -118,7 +118,7 @@ gitmakeinstall() {
 
 finalize() {
 	whiptail --title "All done!" \
-		--msgbox "Log out and log back in as your new user. If it works, it works." 13 80
+		--msgbox "Log out and log back in as your new user. If it works, it works. Make sure to set up cron jobs for the scripts in .local/bin/cron." 13 80
 }
 
 ### THE ACTUAL SCRIPT ###
