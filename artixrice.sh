@@ -51,7 +51,7 @@ adduserandpass() {
 
     export repodir="/home/$name/.local/src"
 	mkdir -p "$repodir"
-	chown -R "$name":"$name" "$(dirname "$repodir")"
+	chown -R "$name":wheel "$(dirname "$repodir")"
 	echo "$name:$pass1" | chpasswd
 	unset pass1 pass2
 }
@@ -89,7 +89,7 @@ installdeps() {
 	while IFS=, read -r program; do
 		n=$((n + 1))
 			whiptail --title "installation of dependencies" \
-		--infobox "Installing \`$program\` ($n of $total) from the AUR." 9 70
+		--infobox "Installing \`$program\` ($n of $total)." 9 70
         sudo -u "$name" yay --needed --noconfirm -S "$program" > /dev/null 2>&1
 	done </tmp/progs.txt
 }
@@ -98,7 +98,7 @@ installdots() {
 	# Downloads a gitrepo $1 and places the files in $2 only overwriting conflicts
 	whiptail --infobox "Downloading and installing config files..." 7 60
 	dir=$(mktemp -d)
-	chown "$name":"$name" "$dir"
+	chown "$name":wheel "$dir"
 	sudo -u "$name" git -C "$repodir" clone --depth 1 \
 		--single-branch --no-tags -q --recursive -b main \
 		--recurse-submodules "$1" "$dir"
@@ -108,13 +108,17 @@ installdots() {
 gitmakeinstall() {
 	dir="$repodir/$1"
 	whiptail --title "Glorious DWM Installation" \
-		--infobox "Installing \`$1\` ($n of $total) via \`git\` and \`make\`." 8 70
+		--infobox "Installing \`$1\` via \`git\` and \`make\`." 8 70
 	sudo -u "$name" git -C "$repodir" clone --depth 1 --single-branch --no-tags -q "$repo/$1" "$dir"
-
 	cd "$dir" || exit 1
 	make >/dev/null 2>&1
 	make install >/dev/null 2>&1
 	cd /tmp || return 1
+}
+
+finalize() {
+	whiptail --title "All done!" \
+		--msgbox "Log out and log back in as your new user. If it works, it works." 13 80
 }
 
 ### THE ACTUAL SCRIPT ###
@@ -139,7 +143,7 @@ refreshkeys || error "Error automatically refreshing Arch keyring. Consider doin
 for x in curl ca-certificates base-devel git zsh; do
 	whiptail --title "LARBS Installation" \
 		--infobox "Installing \`$x\` which is required to install and configure other programs." 8 70
-	pacman --noconfirm --needed -S "$x"
+	pacman --noconfirm --needed -S "$x" > /dev/null 2>&1
 done
 
 adduserandpass || error "Error adding username and/or password."
@@ -171,13 +175,15 @@ installdeps
 
 gitmakeinstall "gdwm"
 gitmakeinstall "gmenu"
-gitmakeinstall "gst"
-gitmakeinstall "gdwmblocks"
+gitmakeinstall "st"
+gitmakeinstall "dwmblocks"
 
 # Install the dotfiles in the user's home directory, but remove .git dir and
 # other unnecessary files.
 installdots "$dotfiles" "/home/$name"
 rm -rf "/home/$name/.git/" "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
+
+chmod -R 777 "/home/$name/.local/bin"
 
 # Write urls for newsboat if it doesn't already exist
 [ -s "/home/$name/.config/newsboat/urls" ] ||

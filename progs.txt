@@ -10,6 +10,7 @@ ueberzug
 bc
 xcompmgr
 xorg-xprop
+cronie
 dosfstools
 libnotify
 dunst
@@ -65,11 +66,9 @@ clang
 python
 redshift
 terminus-font
-keepassxc
 pass
 pass-otp
 xorg-xbacklight
 p7zip
 imagemagick
 urlview
-shellcheck
