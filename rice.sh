@@ -57,7 +57,7 @@ adduserandpass() {
 }
 
 refreshkeys() {
-		whiptail --infobox "Enabling Arch Repositories for more a more extensive software collection..." 7 40
+		whiptail --infobox "Enabling Arch Repositories for more a more extensive software collection..." 10 70
 		pacman --noconfirm --needed -S \
 			artix-keyring artix-archlinux-support >/dev/null 2>&1
 		grep -q "^\[extra\]" /etc/pacman.conf ||
@@ -72,7 +72,7 @@ yayinstall() {
 	# Installs yay manually. Used only for AUR helper here.
 	# Should be run after repodir is created and var is set.
 	whiptail --infobox "Installing yay manually." 7 50
-	sudo -u "$name" git -C "$repodir" clone https://aur.archlinux.org/yay.git ||
+	sudo -u "$name" git -C "$repodir" clone https://aur.archlinux.org/yay.git >/dev/null 2>&1 ||
 		{
 			cd "$repodir/yay" || return 1
 			sudo -u "$name" git pull --force origin master >/dev/null 2>&1
