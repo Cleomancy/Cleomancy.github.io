@@ -5,7 +5,7 @@ xorg-xset
 polkit
 ttf-font-awesome
 ttf-dejavu
-lf-git
+lf
 ueberzug
 bc
 xcompmgr
@@ -27,7 +27,7 @@ mpv
 man-db
 ncmpcpp
 newsboat
-librewolf
+librewolf-bin
 noto-fonts
 noto-fonts-emoji
 ntfs-3g
