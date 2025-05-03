@@ -74,3 +74,4 @@ xorg-xbacklight
 p7zip
 imagemagick
 urlview
+focus-bin
