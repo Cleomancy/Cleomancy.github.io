@@ -1,20 +1,23 @@
 #!/bin/sh
 
-# Arch-based distro rice, DWM and other suckless tools.
-# Stolen from Luke Smith and simplified by the Cleomancer.
+# My custom larbs.xyz setup.
+# Originally from Luke Smith, fitted for my purposes.
+# - the Cleomancer.
 # License: GNU GPLv3
 
 ## ASUMING THIS SCRIPT IS RUN AFTER A BARE INSTALL OF ARCH WITH NOTHING ON IT. LOGGED IN AS ROOT, NOT A USER ACCOUNT.
+## MAKE SURE TIME IS SET UP PROPERLY! I removed it from the script because I always do that manually.
 
 ### OPTIONS AND VARIABLES ###
 
 dotfiles="https://github.com/Cleomancy/dots.git"
 prereq="https://cleomancy.github.io/progs.txt"
-export TERM=ansi
 rssurls="https://landchad.net/rss.xml
 https://artixlinux.org/feed.php \"tech\"
 https://www.archlinux.org/feeds/news/ \"tech\" "
 repo="https://github.com/Cleomancy"
+
+export TERM=ansi
 ### FUNCTIONS ###
 
 error() {
@@ -57,7 +60,13 @@ adduserandpass() {
 }
 
 refreshkeys() {
-		whiptail --infobox "Enabling Arch Repositories for more a more extensive software collection..." 10 70
+	case "$(readlink -f /sbin/init)" in
+	*systemd*)
+		whiptail --infobox "Refreshing Arch Keyring..." 7 40
+		pacman --noconfirm -S archlinux-keyring >/dev/null 2>&1
+		;;
+	*)
+		whiptail --infobox "Enabling Arch Repositories for more a more extensive software collection..." 7 40
 		pacman --noconfirm --needed -S \
 			artix-keyring artix-archlinux-support >/dev/null 2>&1
 		grep -q "^\[extra\]" /etc/pacman.conf ||
@@ -65,7 +74,8 @@ refreshkeys() {
 Include = /etc/pacman.d/mirrorlist-arch" >>/etc/pacman.conf
 		pacman -Sy --noconfirm >/dev/null 2>&1
 		pacman-key --populate archlinux >/dev/null 2>&1
-
+		;;
+	esac
 }
 
 yayinstall() {
@@ -201,6 +211,8 @@ ln -sfT /bin/bash /bin/sh >/dev/null 2>&1
 # dbus UUID must be generated for Artix runit. I usually leave it commented out as I use OpenRC. It is wise to keep it.
 #dbus-uuidgen >/var/lib/dbus/machine-id
 
+### LAPTOP STUFF
+
 # Most important command! Get rid of the beep!
 #rmmod pcspkr
 #echo "blacklist pcspkr" >/etc/modprobe.d/nobeep.conf
@@ -220,6 +232,8 @@ ln -sfT /bin/bash /bin/sh >/dev/null 2>&1
 echo "%wheel ALL=(ALL:ALL) ALL" >/etc/sudoers.d/00-larbs-wheel-can-sudo
 echo "%wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount,/usr/bin/umount,/usr/bin/pacman -Syu,/usr/bin/pacman -Syyu,/usr/bin/pacman -Syyu --noconfirm,/usr/bin/loadkeys,/usr/bin/pacman -Syyuw --noconfirm,/usr/bin/pacman -S -y --config /etc/pacman.conf --,/usr/bin/pacman -S -y -u --config /etc/pacman.conf --" >/etc/sudoers.d/01-larbs-cmds-without-password
 echo "Defaults editor=/usr/bin/nvim" >/etc/sudoers.d/02-larbs-visudo-editor
+mkdir -p /etc/sysctl.d
+echo "kernel.dmesg_restrict = 0" > /etc/sysctl.d/dmesg.conf
 
 # Cleanup
 rm -f /etc/sudoers.d/temp
