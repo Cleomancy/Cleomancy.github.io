@@ -340,6 +340,11 @@ pdir="$browserdir/$profile"
 # Kill the now unnecessary librewolf instance.
 pkill -u "$name" librewolf
 
+#Apparently need to add these services at the default runlevel when using openRC
+rc-update add local default
+rc-update add localmount default
+rc-update add netmount default
+
 # Allow wheel users to sudo with password and allow several system commands
 # (like `shutdown` to run without password).
 echo "%wheel ALL=(ALL:ALL) ALL" >/etc/sudoers.d/00-larbs-wheel-can-sudo
