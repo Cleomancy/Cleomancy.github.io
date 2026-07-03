@@ -3,7 +3,6 @@
 # My custom larbs.xyz setup.
 # Originally from Luke Smith, fitted for my purposes.
 # - the Cleomancer.
-# MAKE SURE YOU SET YOUR SYSTEM TIME MANUALLY AND CORRECTLY, I REMOVED THE AUTOMATION BECAUSE I DON'T USE NTP.
 # License: GNU GPLv3
 
 ### OPTIONS AND VARIABLES ###
@@ -37,11 +36,7 @@ error() {
 
 welcomemsg() {
 	whiptail --title "Welcome!" \
-		--msgbox "Welcome to Luke's Auto-Rice Bootstrapping Script!\\n\\nThis script will automatically install a fully-featured Linux desktop, which I use as my main machine.\\n\\n-Cleo" 10 60
-
-	whiptail --title "Important Note!" --yes-button "All ready!" \
-		--no-button "Return..." \
-		--yesno "Be sure the computer you are using has current pacman updates and refreshed Arch keyrings.\\n\\nMAKE SURE TIME IS SET UP CORRECTLY! I removed it from the script." 8 70
+		--msgbox "Welcome to Luke's Auto-Rice Bootstrapping Script!\\n\\nThis script will automatically install a fully-featured Linux desktop, which I repurposed for my main machine.\\n\\n-Cleo" 10 60
 }
 
 getuserandpass() {
@@ -89,6 +84,14 @@ adduserandpass() {
 }
 
 
+append_if_missing() {
+  if ! grep -q "$2" "$1" >/dev/null 2>&1; then
+    cat >> "$1" << EOF
+	$2
+EOF
+  fi
+}
+
 maininstall() {
 	# Installs all needed programs from main repo.
 	whiptail --title "LARBS Installation" --infobox "Installing \`$1\` ($n of $total). $1 $2" 9 70
@@ -134,7 +137,6 @@ nvidiamsg() {
 	whiptail --title "Graphics" --yes-button "I do !" \
 		--no-button "Ew..." \
 		--yesno "Do you have an nvidia card as your primary video card device? If so, this script installs the NEWEST drivers for freeBSD upon confirmation." 8 70
-	nvidiainstall
 }
 
 nvidiainstall() {
@@ -146,16 +148,12 @@ nvidiainstall() {
 		installpkg "$x"
 	done
 
-	cat > /usr/local/etc/X11/xorg.conf.d/20-nvidia.conf << EOF
-	Section "Device"
-		Identifier "Card0"
-		Driver "nvidia"
-	EndSection
-EOF
-cat >> /etc/rc.conf << EOF
-kld_list="nvidia-modeset"
-EOF
+	[ ! -f /usr/local/etc/X11/xorg.conf.d/20-nvidia.conf ] && printf 'Section "Device"
+			Identifier "Card0"
+			Driver "nvidia"
+	EndSection' >/usr/local/etc/X11/xorg.conf.d/20-nvidia.conf
 
+	append_if_missing /etc/rc.conf kld_list='nvidia-modeset'
 }
 
 putgitrepo() {
@@ -198,24 +196,23 @@ preinstallmsg || error "User exited."
 
 ### The rest of the script requires no user input.
 
-for x in sudo curl linux-rl9-ca-certificates git; do
+for x in sudo curl linux-rl9-ca-certificates git doas ntpsec; do
 	whiptail --title "LARBS Installation" \
 		--infobox "Installing \`$x\` which is required to install and configure other programs." 8 70
 	installpkg "$x"
 done
 
+ntpq -p >/dev/null 2>&1
+
 adduserandpass || error "Error adding username and/or password."
 
-# Allow user to run sudo without password. Since AUR programs must be installed
-# in a fakeroot environment, this is required for all builds with AUR.
-trap 'rm -f /usr/local/etc/sudoers.d/larbs-temp' HUP INT QUIT TERM PWR EXIT
 echo "%wheel ALL=(ALL) NOPASSWD: ALL
 Defaults:%wheel,root runcwd=*" >/usr/local/etc/sudoers.d/larbs-temp
 
 # Use all cores for compilation.
 sed -i "s/-j2/-j$(nproc)/;/^#MAKEFLAGS/s/^#//" /etc/makepkg.conf
 
-nvidiamsg
+nvidiamsg && nvidiainstall
 
 # The command that does all the installing. Reads the progs.csv file and
 # installs each needed program the way required. Be sure to run this only after
@@ -243,26 +240,22 @@ ln -sfT /usr/local/bin/dash /usr/local/bin/sh >/dev/null 2>&1
 # Make sure user is in the right groups to use x
 pw usermod "$name" -G video,wheel
 
-# Use system notifications for Brave on Artix
-# Only do it when systemd is not present
-[ "$(readlink -f /sbin/init)" != "/usr/lib/systemd/systemd" ] && echo "export \$(dbus-launch)" >/usr/local/etc/profile.d/dbus.sh
+echo "export \$(dbus-launch)" >/usr/local/etc/profile.d/dbus.sh
 
 # Enable tap to click commented out since I don't use a laptop all the time
 <<COMMENT
-[ ! -f /etc/X11/xorg.conf.d/40-libinput.conf ] && printf 'Section "InputClass"
+[ ! -f /usr/local/etc/X11/xorg.conf.d/40-libinput.conf ] && printf 'Section "InputClass"
         Identifier "libinput touchpad catchall"
         MatchIsTouchpad "on"
         MatchDevicePath "/dev/input/event*"
         Driver "libinput"
 	# Enable left mouse button by tapping
 	Option "Tapping" "on"
-EndSection' >/etc/X11/xorg.conf.d/40-libinput.conf
+EndSection' >/usr/local/etc/X11/xorg.conf.d/40-libinput.conf
 COMMENT
 
-cat >> /etc/rc.conf << EOF
-dbus_enabled="YES"
-pf_enabled="YES"
-EOF
+append_if_missing /etc/rc.conf dbus_enabled='YES'
+append_if_missing /etc/rc.conf pf_enabled='YES'
 
 # All this below to get Librewolf installed with add-ons and non-bad settings.
 
@@ -284,9 +277,9 @@ pkill -u "$name" librewolf
 
 # Allow wheel users to sudo with password and allow several system commands
 # (like `shutdown` to run without password).
-echo "%wheel ALL=(ALL:ALL) ALL" > /usr/local/etc/sudoers.d/00-larbs-wheel-can-sudo
-echo "Defaults editor=/usr/bin/nvim" > /usr/local/etc/sudoers.d/02-larbs-visudo-editor
-echo "%wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/poweroff,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount*,/usr/bin/umount,/usr/bin/pkg install,/usr/bin/loadkeys,/usr/bin/pacman -Syyuw --noconfirm,/usr/bin/pacman -S -y --config /etc/pacman.conf --,/usr/bin/pacman -S -y -u --config /etc/pacman.conf --" >/usr/local/etc/sudoers.d/01-larbs-cmds-without-password
+echo "permit persist :wheel" > /usr/local/etc/doas.conf
+# echo "permit nopass :wheel cmd /sbin/poweroff /usr/sbin/reboot" >> /usr/local/etc/doas.conf
+# echo "%wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/poweroff,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount*,/usr/bin/umount,/usr/bin/pkg install,/usr/bin/loadkeys,/usr/bin/pacman -Syyuw --noconfirm,/usr/bin/pacman -S -y --config /etc/pacman.conf --,/usr/bin/pacman -S -y -u --config /etc/pacman.conf --" >/usr/local/etc/sudoers.d/01-larbs-cmds-without-password
 
 mkdir -p /etc/sysctl.d
 echo "kernel.dmesg_restrict = 0" > /etc/sysctl.d/dmesg.conf
