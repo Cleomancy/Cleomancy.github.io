@@ -18,9 +18,7 @@ https://notrelated.xyz/rss
 https://www.youtube.com/feeds/videos.xml?channel_id=UCD6VugMZKRhSyzWEWA9W2fg
 https://www.youtube.com/feeds/videos.xml?channel_id=UClOGLGPOqlAiLmOvXW5lKbw
 https://artixlinux.org/feed.php \"tech\"
-https://www.archlinux.org/feeds/news/ \"tech\"
-https://news.opensuse.org/feed.xml \"tech\
-https://www.alpinelinux.org/atom.xml \"tech\" "
+https://www.archlinux.org/feeds/news/ \"tech\" "
 
 ### FUNCTIONS ###
 
@@ -105,11 +103,11 @@ gitmakeinstall() {
 	[ -z "$3" ] && branch="main" || branch="$repobranch"
 	whiptail --title "LARBS Installation" \
 		--infobox "Installing \`$progname\` ($n of $total) via \`git\` and \`make\`. $(basename "$1") $2" 8 70
-	sudo -u "$name" git -C "$repodir" clone --depth 1 --single-branch -b "$branch" \
+	doas -u "$name" git -C "$repodir" clone --depth 1 --single-branch -b "$branch" \
 		--no-tags -q "$1" "$dir" ||
 		{
 			cd "$dir" || return 1
-			sudo -u "$name" git pull --force origin master
+			doas -u "$name" git pull --force origin master
 		}
 	cd "$dir" || exit 1
 	make >/dev/null 2>&1
@@ -163,10 +161,10 @@ putgitrepo() {
 	dir=$(mktemp -d)
 	[ ! -d "$2" ] && mkdir -p "$2"
 	chown "$name":wheel "$dir" "$2"
-	sudo -u "$name" git -C "$repodir" clone --depth 1 \
+	doas -u "$name" git -C "$repodir" clone --depth 1 \
 		--single-branch --no-tags -q --recursive -b "$branch" \
 		--recurse-submodules "$1" "$dir"
-	sudo -u "$name" cp -r "$dir/" "$2"
+	doas -u "$name" cp -r "$dir/" "$2"
 }
 
 finalize() {
@@ -196,7 +194,7 @@ preinstallmsg || error "User exited."
 
 ### The rest of the script requires no user input.
 
-for x in sudo curl linux-rl9-ca-certificates git doas ntpsec; do
+for x in doas curl linux-rl9-ca-certificates git ntpsec; do
 	whiptail --title "LARBS Installation" \
 		--infobox "Installing \`$x\` which is required to install and configure other programs." 8 70
 	installpkg "$x"
@@ -206,8 +204,7 @@ ntpq -p >/dev/null 2>&1
 
 adduserandpass || error "Error adding username and/or password."
 
-echo "%wheel ALL=(ALL) NOPASSWD: ALL
-Defaults:%wheel,root runcwd=*" >/usr/local/etc/sudoers.d/larbs-temp
+echo "permit nopass :wheel" >/usr/local/etc/doas.conf
 
 # Use all cores for compilation.
 sed -i "s/-j2/-j$(nproc)/;/^#MAKEFLAGS/s/^#//" /etc/makepkg.conf
@@ -216,7 +213,7 @@ nvidiamsg && nvidiainstall
 
 # The command that does all the installing. Reads the progs.csv file and
 # installs each needed program the way required. Be sure to run this only after
-# the user has been created and has priviledges to run sudo without a password
+# the user has been created and has priviledges to run doas without a password
 # and all build dependencies are installed.
 installationloop
 # Install the dotfiles in the user's home directory, but remove .git dir and
@@ -226,13 +223,13 @@ rm -rf "/home/$name/.git/" "/home/$name/LICENSE" "/home/$name/README.md"
 
 # Write urls for newsboat if it doesn't already exist
 [ -s "/home/$name/.config/newsboat/urls" ] ||
-	echo "$rssurls" | sudo -u "$name" tee "/home/$name/.config/newsboat/urls" >/dev/null
+	echo "$rssurls" | doas -u "$name" tee "/home/$name/.config/newsboat/urls" >/dev/null
 
 # Make zsh the default shell for the user.
 chsh -s zsh "$name" >/dev/null 2>&1
-sudo -u "$name" mkdir -p "/home/$name/.cache/zsh/"
-sudo -u "$name" mkdir -p "/home/$name/.config/abook/"
-sudo -u "$name" mkdir -p "/home/$name/.config/mpd/playlists/"
+doas -u "$name" mkdir -p "/home/$name/.cache/zsh/"
+doas -u "$name" mkdir -p "/home/$name/.config/abook/"
+doas -u "$name" mkdir -p "/home/$name/.config/mpd/playlists/"
 
 # Make dash the default #!/bin/sh symlink.
 ln -sfT /usr/local/bin/dash /usr/local/bin/sh >/dev/null 2>&1
@@ -265,7 +262,7 @@ browserdir="/home/$name/.librewolf"
 profilesini="$browserdir/profiles.ini"
 
 # Start librewolf headless so it generates a profile. Then get that profile in a variable.
-sudo -u "$name" librewolf --headless >/dev/null 2>&1 &
+doas -u "$name" librewolf --headless >/dev/null 2>&1 &
 sleep 1
 profile="$(sed -n "/Default=.*.default-default/ s/.*=//p" "$profilesini")"
 pdir="$browserdir/$profile"
@@ -275,17 +272,13 @@ pdir="$browserdir/$profile"
 # Kill the now unnecessary librewolf instance.
 pkill -u "$name" librewolf
 
-# Allow wheel users to sudo with password and allow several system commands
+# Allow wheel users to doas with password and allow several system commands
 # (like `shutdown` to run without password).
 echo "permit persist :wheel" > /usr/local/etc/doas.conf
-# echo "permit nopass :wheel cmd /sbin/poweroff /usr/sbin/reboot" >> /usr/local/etc/doas.conf
-# echo "%wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/shutdown,/usr/bin/poweroff,/usr/bin/reboot,/usr/bin/systemctl suspend,/usr/bin/wifi-menu,/usr/bin/mount*,/usr/bin/umount,/usr/bin/pkg install,/usr/bin/loadkeys,/usr/bin/pacman -Syyuw --noconfirm,/usr/bin/pacman -S -y --config /etc/pacman.conf --,/usr/bin/pacman -S -y -u --config /etc/pacman.conf --" >/usr/local/etc/sudoers.d/01-larbs-cmds-without-password
+echo "permit nopass :wheel cmd /sbin/poweroff sbin/reboot /bin/pkg" >> /usr/local/etc/doas.conf
 
 mkdir -p /etc/sysctl.d
 echo "kernel.dmesg_restrict = 0" > /etc/sysctl.d/dmesg.conf
-
-# Cleanup
-rm -f /usr/local/etc/sudoers.d/larbs-temp
 
 # Last message! Install complete!
 finalize
